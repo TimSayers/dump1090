@@ -8,7 +8,7 @@ The main features are:
 * Robust decoding of weak messages, with mode1090 many users observed
   improved range compared to other popular decoders.
 * Network support: TCP30003 stream (MSG5...), Raw packets, HTTP.
-* Embedded HTTP server that displays the currently detected aircrafts on
+* Embedded HTTP server that displays the currently detected aircraft on
   Google Map.
 * Single bit errors correction using the 24 bit CRC.
 * Ability to decode DF11, DF17 messages.
@@ -16,16 +16,28 @@ The main features are:
   where the checksum is xored with the ICAO address by brute forcing the
   checksum field using recently seen ICAO addresses.
 * Decode raw IQ samples from file (using --ifile command line switch).
-* Interactive command-line-interfae mode where aircrafts currently detected
+* Interactive command-line-interface mode where aircraft currently detected
   are shown as a list refreshing as more data arrives.
 * CPR coordinates decoding and track calculation from velocity.
-* TCP server streaming and recceiving raw data to/from connected clients
+* TCP server streaming and receiving raw data to/from connected clients
   (using --net).
+
+TimS - Changes (2022)
+---
+* Updated to use CMake build system.
+* Restructured git repository.
+* Removed COAA plane plotter system.
+* Slight patches to fix compilation issues.
 
 Installation
 ---
 
-Type "make".
+```shell
+mkdir build
+cd build
+cmake ..
+make -j$(nproc)
+```
 
 Normal usage
 ---
@@ -48,9 +60,9 @@ with your browser to http://localhost:8080 to see live traffic:
 
     ./dump1090 --interactive --net
 
-In iteractive mode it is possible to have a less information dense but more
+In interactive mode it is possible to have less information dense but more
 "arcade style" output, where the screen is refreshed every second displaying
-all the recently seen aircrafts with some additional information such as
+all the recently seen aircraft with some additional information such as
 altitude and flight number, extracted from the received Mode S packets.
 
 Using files as source of data
@@ -66,7 +78,7 @@ program that is able to output 8-bit unsigned IQ samples at 2Mhz sample rate).
     rtl_sdr -f 1090000000 -s 2000000 -g 50 output.bin
 
 In the example `rtl_sdr` a gain of 50 is used, simply you should use the highest
-gain availabe for your tuner. This is not needed when calling Dump1090 itself
+gain available for your tuner. This is not needed when calling Dump1090 itself
 as it is able to select the highest gain supported automatically.
 
 It is possible to feed the program with data via standard input using
@@ -86,7 +98,7 @@ it without arguments at all is the best thing to do.
 Reliability
 ---
 
-By default Dump1090 checks for decoding errors using the 24-bit CRC checksum,
+By default, Dump1090 checks for decoding errors using the 24-bit CRC checksum,
 where available. Messages with errors are discarded.
 
 The --fix command line switch enables fixing single bit error correction
@@ -103,12 +115,12 @@ Performances and sensibility of detection
 
 In my limited experience Dump1090 was able to decode a big number of messages
 even in conditions where I encountered problems using other programs, however
-no formal test was performed so I can't really claim that this program is
+no formal test was performed, so I can't really claim that this program is
 better or worse compared to other similar programs.
 
 If you can capture traffic that Dump1090 is not able to decode properly, drop
 me an email with a download link. I may try to improve the detection during
-my free time (this is just an hobby project).
+my free time (this is just a hobby project).
 
 Network server features
 ---
@@ -141,12 +153,12 @@ like this:
     nc remote-dump1090.example.net 30002 | nc localhost 30001
 
 It is important to note that what is received via port 30001 is also
-broadcasted to clients listening to port 30002.
+broadcast to clients listening to port 30002.
 
 In general everything received from port 30001 is handled exactly like the
 normal traffic from RTL devices or from file when --ifile is used.
 
-It is possible to use Dump1090 just as an hub using --ifile with /dev/zero
+It is possible to use Dump1090 just as a hub using --ifile with /dev/zero
 as argument as in the following example:
 
     ./dump1090 --net-only
@@ -172,14 +184,14 @@ Antenna
 ---
 
 Mode S messages are transmitted in the 1090 Mhz frequency. If you have a decent
-antenna you'll be able to pick up signals from aircrafts pretty far from your
+antenna you'll be able to pick up signals from aircraft pretty far from your
 position, especially if you are outdoor and in a position with a good sky view.
 
-You can easily build a very cheap antenna following the istructions at:
+You can easily build a very cheap antenna following the instructions at:
 
     http://antirez.com/news/46
 
-With this trivial antenna I was able to pick up signals of aircrafts 200+ Km
+With this trivial antenna I was able to pick up signals of aircraft 200+ Km
 away from me.
 
 If you are interested in a more serious antenna check the following
@@ -194,18 +206,18 @@ Aggressive mode
 
 With --aggressive it is possible to activate the *aggressive mode* that is a
 modified version of the Mode S packet detection and decoding.
-The aggresive mode uses more CPU usually (especially if there are many planes
+The aggressive mode uses more CPU usually (especially if there are many planes
 sending DF17 packets), but can detect a few more messages.
 
 The algorithm in aggressive mode is modified in the following ways:
 
-* Up to two demodulation errors are tolerated (adjacent entires in the
+* Up to two demodulation errors are tolerated (adjacent entries in the
   magnitude vector with the same eight). Normally only messages without
   errors are checked.
 * It tries to fix DF17 messages with CRC errors resulting from any two bit
   errors.
 
-The use of aggressive mdoe is only advised in places where there is
+The use of aggressive mode is only advised in places where there is
 low traffic in order to have a chance to capture some more messages.
 
 Debug mode
@@ -243,11 +255,11 @@ based on how the messages look graphically.
 How to test the program?
 ---
 
-If you have an RTLSDR device and you happen to be in an area where there
+If you have an RTLSDR device, and you happen to be in an area where there
 are aircrafts flying over your head, just run the program and check for signals.
 
-However if you don't have an RTLSDR device, or if in your area the presence
-of aircrafts is very limited, you may want to try the sample file distributed
+However, if you don't have an RTLSDR device, or if in your area the presence
+of aircraft is very limited, you may want to try the sample file distributed
 with the Dump1090 distribution under the "testfiles" directory.
 
 Just run it like this:
@@ -271,9 +283,9 @@ program source code distribution.
 Contributing
 ---
 
-Dump1090 was written during some free time during xmas 2012, it is an hobby
-project so I'll be able to address issues and improve it only during
-free time, however you are incouraged to send pull requests in order to
+Dump1090 was written during some free time during xmas 2012, it is a hobby
+project, so I'll be able to address issues and improve it only during
+free time, however you are encouraged to send pull requests in order to
 improve the program. A good starting point can be the TODO list included in
 the source distribution.
 
